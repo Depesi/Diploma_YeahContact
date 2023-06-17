@@ -1,0 +1,57 @@
+<!-- {% extends 'number/base.html' %}
+{% load static %}
+{% load file_extras %}
+
+{% block link %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mt-5">Виникли якісь запитання | побажання?</h1>
+    <h1 class="text-center">Ця форма саме для Вас</h1>
+
+<section class="mb-4 mt-5" style="background: rgba(255,255,255, 0.4); padding: 40px 20px;">cd
+    <div class="row">
+        <div class="col-md-9 mb-md-0 mb-5">
+            <form id="contact-form" name="contact-form" action="{% url 'contacts_submit' %}" method="POST">
+                {% csrf_token %}
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="md-form mb-0">
+                            <input type="text" id="name" name="username" class="form-control" placeholder="Ваше ім'я" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="md-form mb-0">
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Ваш email" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="md-form">
+                            <textarea type="text" maxlength="350" id="message" name="message" rows="3" class="form-control md-textarea" placeholder="Ваше повідомлення" required></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="text-center text-md-left mt-1">
+                <a class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">Відправити</a>
+            </div>
+            <div class="status"></div>
+        </div>
+        <div class="col-md-3 text-center">
+            <h6>Наші контактні дані</h6>
+            <ul class="list-unstyled mb-0">
+                <li>
+                    <p>тел: +380998899888</p>
+                </li>
+                <li>
+                    <p>email: adminsn@gmail.com</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %} -->

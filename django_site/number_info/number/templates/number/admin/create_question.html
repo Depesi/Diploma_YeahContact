@@ -1,0 +1,40 @@
+{% extends 'number/base.html' %}
+{% load static %}
+{% load file_extras %}
+{% block title %}Створення запитання{% endblock %}
+{% block link %}
+{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height: 90vh;">
+    <div style="margin-top: 80px;">
+        <form id="form_question" action="{% url 'admin_question' %}" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="row">
+                    <div class="form-group">
+                        {{ field.label }}
+                        {{ field }}
+                    </div>
+                </div>
+                 {% if field.errors %}
+                    <div class="row">
+                        <div class="col s6 offset-s3">
+                            <div class="text-center" style="padding:5px; background-color: rgba(240,52,32,0.8)">
+                                <span class="white-text">
+                                    {{ field.errors }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class="row">
+                <div class="col s9 right-align" style="margin-top:10px; margin-bottom:10px;">
+                    <button type="submit" class="btn waves-effect waves-yellow green">Створити</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

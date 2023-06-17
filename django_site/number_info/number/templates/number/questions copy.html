@@ -1,0 +1,55 @@
+{% extends 'number/base.html' %}
+{% load static %}
+{% load file_extras %}
+
+{% block title %}Часті запитання{% endblock %}
+
+{% block link %}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+  .btn:focus{
+    outline: none;
+    box-shadow: none;
+  }
+  .accordion .btn{
+    text-decoration: none;
+  }
+  .card{
+    margin-bottom: 4px;
+  }
+</style>
+<div class="container" style="min-height: 90vh;">
+    <h2 class="text-center" style="margin: 80px; font-size: 40pt;">Запитання/Відповіді</h2>
+
+<div class="accordion" id="accordionExample">
+  {% for item in questions %}
+    <div class="card">
+      <div class="card-header" id="heading{{ forloop.counter }}">
+        <h2 class="mb-0">
+          <button class="btn btn-link" style="width: 100%; text-align: left;" type="button" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+            {{ item.question }}
+          </button>
+        </h2>
+      </div>
+      <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}" data-parent="#accordionExample">
+        <div class="card-body">
+          {{ item.answer }}
+          {% if user.is_superuser %}
+              <div class="">
+                <form action="{% url 'admin_question_delete' %}" method="post">
+                   {% csrf_token %}
+                  <input type="text" hidden value="{{ item.id }}" name="id">
+                  <button type="submit" class="btn btn-danger">Вилучити</button>
+                </form>
+              </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}

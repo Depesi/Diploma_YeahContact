@@ -1,0 +1,21 @@
+{% extends 'number/base.html' %}
+{% load static %}
+{% load file_extras %}
+
+{% block link %}
+{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height: 90vh;">
+    <div class="text-center mt-2">
+        <div class="btn-group" role="group">
+          <a type="button" href="{% url 'admin_question' %}"  class="btn btn-info">Додати часте запитання</a>
+          <a type="button" href="{% url 'questions' %}" class="btn btn-warning">Переглянути питання</a>
+        </div>
+        <br>
+        <div class="btn-group mt-2" role="group">
+          <a type="button" href="{% url 'admin_contacts' %}"  class="btn btn-warning">Переглянути зворотні відповіді</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

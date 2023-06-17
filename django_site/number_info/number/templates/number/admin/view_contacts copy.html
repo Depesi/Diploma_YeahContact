@@ -1,0 +1,30 @@
+{% extends 'number/base.html' %}
+{% load static %}
+{% load file_extras %}
+
+{% block link %}
+{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height: 90vh;">
+    <div class="text-center" style="margin-top: 80px;">
+        {% for c in contacts %}
+        <div class="card" style="width: 15rem; margin-bottom: 4px; margin-left: 3px; display:inline-block;">
+          <div class="card-body">
+            <h5 class="card-title">{{ c.username }}</h5>
+              <h6 class="card-subtitle mb-1">{{ c.email }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">{{ c.create_at|date:"d.m.Y" }}</h6>
+            <p class="card-text" style="height: 120px; overflow:auto;">{{ c.message }}</p>
+              <form action="{% url 'admin_contacts' %}" id="form{{ forloop.counter }}" method="post" hidden>
+                  {% csrf_token %}
+                  <input type="text" value="{{ c.id }}" name="id" hidden>
+              </form>
+            <a  onclick="document.getElementById('form{{ forloop.counter }}').submit();" class="btn btn-light">Позначити як переглянуте</a>
+          </div>
+        </div>
+        {% empty %}
+        <h4>Відповідей немає</h4>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

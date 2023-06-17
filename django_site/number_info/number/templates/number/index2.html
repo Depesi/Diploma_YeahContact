@@ -1,0 +1,236 @@
+{% extends 'number/base.html' %}
+{% load static %}
+{% load file_extras %}
+
+{% block link %}
+{% endblock %}
+
+{% block content %}
+<script>
+    $(window).load(function(){
+        var phones = [{ "mask": "+380#########"}];
+        $('#textbox').inputmask({
+            mask: phones,
+            greedy: false,
+            definitions: { '#': { validator: "[0-9]", cardinality: 1}} });
+    });
+</script>
+<header>
+    <form action="{% url 'search_form' %}" method="post">
+        {% csrf_token %}
+         <div class="number_search">
+           <div class="d-flex justify-content-center">
+            <div class="number number__search_text">
+              <table style="height:75px;"><tbody><tr>
+                  {% if phone_number %}
+                    <td class="align-bottom"><input class="input_number" id="textbox" placeholder="Номер телефону" value="{{phone_number}}" type="text" name="number"/></td>
+                  {% else %}
+                    <td class="align-bottom"><input class="input_number" id="textbox" placeholder="Номер телефону" type="text" name="number"/></td>
+                  {% endif %}
+              </tr></tbody></table>
+            </div>
+               <button class="search">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </div>
+               </button>
+           </div>
+         </div>
+    </form>
+</header>
+{% if number %}
+<div class="ni">
+    <div class="number_info">
+        <div class="number">
+            {{ phone_number }}
+        </div>
+    </div>
+     <div class="bar">
+        <div class="red" style="width:{{ comments_stat }}%">{{ comments_stat }}%</div>
+        <div class="green" style="width:{{ comments_stat|to_int:'100' }}%">{{ comments_stat|to_int:'100' }}%</div>
+     </div>
+    <div class="info_div">
+        <div class="info">
+
+            <div style="padding:20px 0 0 20px;">
+            <div class="row mb-2">
+                <div class="col-6">Кількість оцінок</div>
+                <div class="col-4 bold">{{ comments_count }}
+                    <svg style="padding-bottom:5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-dots-fill" viewBox="0 0 16 16">
+                      <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm5 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-6">Остання оцінка</div>
+                {% if comments_last_add %}
+                <div class="col-4 bold">{{ comments_last_add|date:"d.m.Y" }}</div>
+                {% else %}
+                <div class="col-4 bold">пусто</div>
+                {% endif %}
+            </div>
+            <div class="row mb-2">
+                <div class="col-6">Кількість переглядів</div>
+                <div class="col-4 bold">{{ number.views }}
+                    <svg style="padding-bottom:5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-binoculars-fill" viewBox="0 0 16 16">
+                      <path d="M4.5 1A1.5 1.5 0 0 0 3 2.5V3h4v-.5A1.5 1.5 0 0 0 5.5 1h-1zM7 4v1h2V4h4v.882a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V13H9v-1.5a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5V13H1V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882V4h4zM1 14v.5A1.5 1.5 0 0 0 2.5 16h3A1.5 1.5 0 0 0 7 14.5V14H1zm8 0v.5a1.5 1.5 0 0 0 1.5 1.5h3a1.5 1.5 0 0 0 1.5-1.5V14H9zm4-11H9v-.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5V3z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-6">Останній перегляд</div>
+                <div class="col-4 bold">{{ number.last_view_date|date:"d.m.Y" }}</div>
+            </div>
+            </div>
+        </div>
+        <div class="graph">
+            <canvas id="myChart" width="400" height=""></canvas>
+        </div>
+    </div>
+
+    <div class="comment_div" style="background: white;">
+        <div class="card" style="width: 45%; height:auto; margin-bottom:10px; ">
+            <div class="card-header" style=""><h3>Додавання відгуку</h3></div>
+            <div class="card-body">
+                <form action="{% url 'send_comment' number=phone_number %}"  method="post">
+                    {% csrf_token %}
+                    <textarea class="form-control" name="comment" rows="10" placeholder="Відгук по номеру {{ phone_number }}" maxlength="250"></textarea>
+                    <div class="btn-group d-flex mt-1" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="btnradio" value="1" id="btnradio1" autocomplete="off" checked>
+                        <label class="btn btn-outline-danger" for="btnradio1">Небезпечний</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" value="2" id="btnradio2" autocomplete="off">
+                        <label class="btn btn-outline-warning" for="btnradio2">Надокучливий</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" value="3" id="btnradio3" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btnradio3">Нейтральний</label>
+
+                        <input type="radio" class="btn-check" name="btnradio" value="4" id="btnradio4" autocomplete="off">
+                        <label class="btn btn-outline-success" for="btnradio4">Безпечний</label>
+                    </div>
+                    <br>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-dark" style="width:auto; padding: auto 40px;">Надіслати</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% if comments %}
+        <div style="width:55%; dispay:flex; flex-direction:column; justify-content:space-between;">
+            <div class="comment_comment">
+                {% for comment in comments %}
+
+                    <div class="d-flex flex-column comment-section {{ comment.level.text }} ">
+                        <div class="p-2">
+                            <div class="d-flex flex-row user-info">
+                                <div class="d-flex flex-column justify-content-start ml-2"><span class="date text-black-50">{{ comment.date_create|date:"d.m.Y" }}</span></div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="comment-text" style="font-size:17px;">{{ comment.content }}</div>
+                            </div>
+                        </div>
+                    </div>
+                <hr class="comment_hr">
+                {% endfor %}
+            </div>
+            {% if comments.has_other_pages %}
+                <div style="margin:auto auto; width:min-content;">
+                    <nav aria-label="Page navigation example">
+                      <ul class="pagination justify-content-center">
+                        {% if comments.has_previous %}
+                          <li class="page-item">
+                              <a class="page-link btn-outline-secondary" href="?page={{ comments.previous_page_number }}">&laquo;</a>
+                          </li>
+                        {% else %}
+                          <li class="disabled page-item"><span class="page-link btn-outline-secondary">&laquo;</span></li>
+                        {% endif %}
+                        {% for i in comments.paginator.page_range %}
+                          {% if comments.number == i %}
+                            <li class="active page-item">
+                                <span class="page-link btn-outline-secondary">{{ i }}</span>
+                            </li>
+                          {% else %}
+                            <li class="page-item">
+                                <a class="page-link btn-outline-secondary" href="?page={{ i }}">{{ i }}</a>
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                        {% if comments.has_next %}
+                          <li class="page-item">
+                              <a class="page-link bg-outline-secondary" href="?page={{ comments.next_page_number }}">&raquo;</a>
+                          </li>
+                        {% else %}
+                          <li class="disabled page-item"><span class="page-link bg-outline-secondary">&raquo;</span></li>
+                        {% endif %}
+                      </ul>
+                    </nav>
+                </div>
+            {% endif %}
+        </div>
+        {% else %}
+            <h2 style="width:55%; text-align:center;">Коментарі відсутні</h2>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div>
+    <div class="">
+        <h1>Останні переглянуті</h1>
+         {% if last_view %}
+            {% for v in last_view %}
+                <a class="box" href="{% url 'search_number' number=v.number %}">
+                    {{ v.number }}<br>
+                    <div style="text-align:right;">{{ v.views }}  <i class="bi bi-eye-fill"></i></div>
+                </a>
+            {% endfor %}
+         {% endif %}
+    </div>
+    <div>
+        <h1>Популярні по перегляду</h1>
+         {% if popular_view %}
+            {% for v in popular_view %}
+                <a class="box" href="{% url 'search_number' number=v.number %}">
+                    {{ v.number }}<br>
+                    <div style="text-align:right;">{{ v.views }}  <i class="bi bi-eye-fill"></i></div>
+                </a>
+            {% endfor %}
+         {% endif %}
+    </div>
+     <div>
+         <h1>Популярні по кількості відгуків</h1>
+         {% if popular_comments %}
+            {% for v in popular_comments %}
+                <a class="box" href="{% url 'search_number' number=v.id_number__number %}">
+                    {{ v.id_number__number }}<br>
+                    <div style="text-align:right;">{{ v.total }}  <i class="bi bi-pen"></i>
+                    </div>
+                </a>
+            {% endfor %}
+         {% endif %}
+    </div>
+</div>
+
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ stats_date|safe }},
+            datasets: [{
+                label: 'Перегляди',
+                data: {{ stats_views|safe }}
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

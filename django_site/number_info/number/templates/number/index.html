@@ -1,0 +1,170 @@
+{% extends 'number/base.html' %}
+{% load static %}
+{% block link %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/hover.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <script src="{% static 'js/hover.js' %}"></script>
+
+<div class="s130">
+      <form action="{% url 'search_form' %}" method="post">
+          {% csrf_token %}
+        <div class="inner-form">
+          <div class="input-field first-wrap">
+            <div class="svg-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+              </svg>
+            </div>
+            <input id="search" type="text" name="number" placeholder="Номер телефону" />
+          </div>
+          <div class="input-field second-wrap">
+            <button class="btn-search" type="submit">Пошук</button>
+          </div>
+        </div>
+      </form>
+</div>
+{% if number %}
+<hr class="number_hr">
+<div class="main-block">
+    <h1 style="text-shadow: 1px 1px 1px #0000009c; color:#d36812; margin:5px; font-size:40px;">Номер телефону: <b>{{number.id_number.number}}</b></h1>
+    <div style="text-align:right;">
+        <div>{{ number.last_view_date|date:"d.m.Y" }}  <i class="bi bi-calendar-check-fill"></i></div>
+        <div>{{ number.views }}  <i class="bi bi-eye-fill"></i></div>
+    </div>
+</div>
+<div class="card" style="width: 60%; margin-left: 20px; border-radius: 20px;">
+    <div class="card-header" style="">
+        <h3>Добавлення відгуку</h3>
+    </div>
+    <div class="card-body">
+        <form action="{% url 'send_comment' number=phone_number %}" method="post">
+            {% csrf_token %}
+            <textarea class="form-control" name="comment" rows="5" placeholder="Відгук по номеру {{ phone_number }}"></textarea>
+            <div class="btn-group d-flex mt-1" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" value="1" id="btnradio1" autocomplete="off" checked>
+                <label class="btn btn-outline-danger" for="btnradio1">Небезпечний</label>
+
+                <input type="radio" class="btn-check" name="btnradio" value="2" id="btnradio2" autocomplete="off">
+                <label class="btn btn-outline-warning" for="btnradio2">Надокучливий</label>
+
+                <input type="radio" class="btn-check" name="btnradio" value="3" id="btnradio3" autocomplete="off">
+                <label class="btn btn-outline-primary" for="btnradio3">Нейтральний</label>
+
+                <input type="radio" class="btn-check" name="btnradio" value="4" id="btnradio4" autocomplete="off">
+                <label class="btn btn-outline-success" for="btnradio4">Безпечний</label>
+            </div>
+            <br>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-dark" style="width:auto; padding: auto 40px;">Відправити</button>
+                </div>
+        </form>
+    </div>
+</div>
+
+{% if comments %}
+<div class="mt-2" style="margin-left: 10px;">
+    <div class="d-flex row">
+        <div class="col-md-8">
+            {% for comment in comments %}
+                <div class="d-flex flex-column comment-section">
+                    <div class="bg-white p-2">
+                        <div class="d-flex flex-row user-info">
+                            <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{ comment.level.text }}</span><span class="date text-black-50">{{ comment.date_create }}</span></div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="comment-text" style="font-size:17px;">{{ comment.content }}</div>
+                        </div>
+                    </div>
+                    <div class="bg-white">
+                        <div class="d-flex flex-row fs-12">
+    <!--                        <span class="ml-1">Like</span>-->
+                            <div class="like p-2 cursor"><i class="bi bi-hand-thumbs-up-fill"></i></div>
+                            <div class="like p-2 cursor"><i class="bi bi-hand-thumbs-down-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if comments.has_other_pages %}
+        <div class="col-8">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center">
+                {% if comments.has_previous %}
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ comments.previous_page_number }}">&laquo;</a>
+                  </li>
+                {% else %}
+                  <li class="disabled page-item"><span class="page-link">&laquo;</span></li>
+                {% endif %}
+                {% for i in comments.paginator.page_range %}
+                  {% if comments.number == i %}
+                    <li class="active page-item">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                  {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+                {% if comments.has_next %}
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ comments.next_page_number }}">&raquo;</a>
+                  </li>
+                {% else %}
+                  <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
+                {% endif %}
+              </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+        <h2>Коментарі відсутні</h2>
+{% endif %}
+
+<hr class="number_hr">
+{% endif %}
+
+<div>
+    <div class="">
+        <h1>Останні переглянуті</h1>
+         {% if last_view %}
+            {% for v in last_view %}
+                <a class="box" href="{% url 'search_number' number=v.id_number.number %}">
+                    {{ v.id_number.number }}<br>
+                    <div style="text-align:right;">{{ v.views }}  <i class="bi bi-eye-fill"></i></div>
+                </a>
+            {% endfor %}
+         {% endif %}
+    </div>
+    <div>
+        <h1>Популярні по перегляду</h1>
+         {% if popular_view %}
+            {% for v in popular_view %}
+                <a class="box" href="{% url 'search_number' number=v.id_number.number %}">
+                    {{ v.id_number.number }}<br>
+                    <div style="text-align:right;">{{ v.views }}  <i class="bi bi-eye-fill"></i></div>
+                </a>
+            {% endfor %}
+         {% endif %}
+    </div>
+     <section>
+         <h1>Популярні по коментарям</h1>
+         {% if popular_comments %}
+            {% for v in popular_comments %}
+                <a class="box" href="{% url 'search_number' number=v.id_number__number %}">
+                    {{ v.id_number__number }}<br>
+                    <div style="text-align:right;">{{ v.total }}  <i class="bi bi-pen"></i>
+                    </div>
+                </a>
+            {% endfor %}
+         {% endif %}
+    </section>
+</div>
+
+
+{% endblock %}
